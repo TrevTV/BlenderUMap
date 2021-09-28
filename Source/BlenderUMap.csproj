@@ -26,4 +26,8 @@
      <ProjectReference Include="..\Dependencies\CUE4Parse\CUE4Parse\CUE4Parse.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="COPY &quot;..\Dependencies\deps.blend&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
+
 </Project>
