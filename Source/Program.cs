@@ -44,7 +44,8 @@ namespace BlenderUMap
 
             FileProvider = new DefaultFileProvider(Config.GameDirectory, SearchOption.AllDirectories, false, new VersionContainer(Config.GameVersion));
             FileProvider.Initialize();
-            FileProvider.SubmitKey(new FGuid("00000000000000000000000000000000"), new FAesKey("0x0000000000000000000000000000000000000000000000000000000000000000"));
+            foreach (AESKeyInfo aes in Config.EncryptionKeys)
+                FileProvider.SubmitKey(aes.FGuid, aes.FAes);
             FileProvider.LoadLocalization();
             BeginExport();
 

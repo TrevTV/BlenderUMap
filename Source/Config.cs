@@ -10,6 +10,7 @@ namespace BlenderUMap
     {
         public static string GameDirectory => instance?.gameDir;
         public static EGame GameVersion => (EGame)Enum.Parse(typeof(EGame), instance?.gameVersion);
+        public static AESKeyInfo[] EncryptionKeys => instance?.encryptionKeys;
         public static string ExportPackage => instance?.exportPackage;
 
         private static string configPath;
@@ -46,7 +47,8 @@ namespace BlenderUMap
         private readonly string gameDir = "C:\\Program Files\\Epic Games\\Fortnite\\FortniteGame\\Content\\Paks";
         [JsonProperty("UEVersion")]
         private readonly string gameVersion = "GAME_UE4_LATEST";
-        // todo: encryption keys, bools, cache size
+        [JsonProperty("EncryptionKeys")]
+        private readonly AESKeyInfo[] encryptionKeys = new AESKeyInfo[] { new() };
         [JsonProperty("ExportPackage")]
         private readonly string exportPackage = "/Game/Athena/Apollo/Maps/Buildings/3x3/Apollo_3x3_BoatRental";
     }
