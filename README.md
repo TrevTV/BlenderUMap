@@ -19,7 +19,18 @@ A port of [Amrsatrio/BlenderUmap](https://github.com/Amrsatrio/BlenderUmap) to C
     - If you would like to view the progress of the import, before starting open the System Console by going to `Window > Toggle System Console`
 
 # Importing into Unity
-TODO
+1. Follow the `Importing into Blender` section.
+2. Save the blend file, making sure that you are in the Imported Map scene, and drag that into Unity's project window.
+3. Click on the file and in the Inspector, in the Materials section, press `Extract Materials` and select a folder to extract them to (preferably an empty one)
+4. Place the file into a scene.
+5. Download the Editor script from [here](https://github.com/TrevTV/BlenderUMap/blob/main/ImporterSource/UMapTextureApplicator.cs) and place it into any folder in the project named `Editor`
+6. Go to `Tools > UMap Texture Applicator` and fill out the fields
+    - `BlenderUMap Path` is the same as the Blender script's `data_dir`
+    - `Texture Import Path` is where all the textures are placed in the project
+    - `Root Object` is the base model object in the scene
+7. Press `Begin Import` and wait as all the textures are imported and applied to the objects.
+    - You may get warnings like `Failed to find object X` or `Failed to find material X`, this will cause those objects/materials to not get their textures applied and it may need to be done manually.
+8. Save the scene and you may get a pop-up that mentions normal map issues, simply press "Fix All" and it'll all work.
 
 # Credits
  - [Amrsatrio](https://github.com/Amrsatrio/) for the original BlenderUmap

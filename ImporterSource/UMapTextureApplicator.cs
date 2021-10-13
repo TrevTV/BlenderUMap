@@ -56,8 +56,11 @@ public class UMapTextureApplicator : EditorWindow
                 FileUtil.CopyFileOrDirectory(texture, Path.Combine(textureImportDir, Path.GetFileName(texture)));
         }
         AssetDatabase.Refresh();
-        foreach (string texture in texturePaths)
-            allTextures.Add((Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(textureImportDir, Path.GetFileName(texture)), typeof(Texture2D)));
+        foreach (string guid in AssetDatabase.FindAssets("t:Texture2D", new string[] { textureImportDir }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            allTextures.Add((Texture2D)AssetDatabase.LoadAssetAtPath(path, typeof(Texture2D)));
+        }
 
         // actually do the texture application stuff
         string json = File.ReadAllText(Path.Combine(umapPath, "_processed.json"));
