@@ -12,6 +12,7 @@ namespace BlenderUMap
         public static EGame GameVersion => (EGame)Enum.Parse(typeof(EGame), instance?.gameVersion);
         public static AESKeyInfo[] EncryptionKeys => instance?.encryptionKeys;
         public static string ExportPackage => instance?.exportPackage;
+        public static bool UseUModel => instance?.useUmodel ?? false;
 
         private static string configPath;
         private static Config instance;
@@ -51,5 +52,7 @@ namespace BlenderUMap
         private readonly AESKeyInfo[] encryptionKeys = new AESKeyInfo[] { new() };
         [JsonProperty("ExportPackage")]
         private readonly string exportPackage = "/Game/Athena/Apollo/Maps/Buildings/3x3/Apollo_3x3_BoatRental";
+        [JsonProperty("UseUModel")]
+        private readonly bool useUmodel = false;
     }
 }

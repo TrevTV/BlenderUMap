@@ -12,7 +12,7 @@ namespace BlenderUMap
 {
     internal class MeshActorInfo : BaseActorInfo
     {
-        public static MeshActorInfo Get(UObject actor)
+        public static MeshActorInfo Get(UObject actor, bool exportMesh = true, bool readMaterials = true)
         {
             Log.Logger.Information("Attempting mesh read of actor " + actor.Name);
             var staticMeshComponent = actor.GetOrDefaultLazy<UStaticMeshComponent>("StaticMeshComponent").Value;
@@ -20,15 +20,15 @@ namespace BlenderUMap
 
             var staticMesh = staticMeshComponent.GetOrDefault<UStaticMesh>("StaticMesh");
             var materials = new List<MaterialInfo>();
-            if (staticMesh != null)
+            if (staticMesh != null && exportMesh)
             {
-                MeshExporter exporter = new(staticMesh, ELodFormat.FirstLod, false);
+                MeshMultiExporter exporter = new(staticMesh, ELodFormat.FirstLod, Config.UseUModel);
                 if (exporter.TryWriteToDir(Program.CurrentDirectory, out string savedFileName))
                 {
                     Log.Logger.Information("Exported mesh to " + staticMesh.GetExportDir());
-                    Log.Logger.Information(savedFileName);
+                    //Log.Logger.Information(savedFileName);
                 }
-                if (staticMesh.Materials != null)
+                if (staticMesh.Materials != null && readMaterials)
                 {
                     foreach (var matLazy in staticMesh.Materials)
                     {
@@ -39,12 +39,16 @@ namespace BlenderUMap
                     }
                 }
             }
-            else Log.Logger.Warning("Failed to find StaticMesh on " + staticMeshComponent.Name);
+            else if (staticMesh == null) Log.Logger.Warning("Failed to find StaticMesh on " + staticMeshComponent.Name);
 
             MeshActorInfo info = new()
             {
                 Name = actor.Name,
-                DirPath = staticMesh == null ? string.Empty : Path.Combine(staticMesh?.GetExportDir().FullName, $"{staticMesh.Name}_LOD0.pskx"),
+                DirPath = staticMesh == null ? string.Empty :
+                          (Config.UseUModel
+                          ? Path.Combine(staticMesh.GetExportDir().FullName.Replace($"{Program.FileProvider.GameName}\\Content\\", "\\Game\\"), $"{staticMesh.Name}.pskx")
+                          : Path.Combine(staticMesh.GetExportDir().FullName, $"{staticMesh.Name}_LOD0.pskx")),
+                StaticMesh = staticMesh,
                 Position = staticMeshComponent.GetOrDefault<FVector>("RelativeLocation"),
                 Rotation = staticMeshComponent.GetOrDefault<FRotator>("RelativeRotation"),
                 Scale = staticMeshComponent.GetOrDefault<FVector>("RelativeScale3D"),
@@ -56,6 +60,7 @@ namespace BlenderUMap
         }
 
         public string DirPath;
+        [Newtonsoft.Json.JsonIgnore] public UStaticMesh StaticMesh;
         public FVector Position;
         public FRotator Rotation;
         public FVector Scale;
