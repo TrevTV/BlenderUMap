@@ -21,56 +21,64 @@ def import_umap(comps, into_collection):
     map_layer_collection = map_scene.view_layers[0].layer_collection.children[map_collection.name]
 
     for comp_i, comp in enumerate(comps):
-        name = comp["Name"]
-        mesh_path = comp["DirPath"]
+        def import_mesh(meshData, mesh_path, materials):
+            name = meshData["Name"]
         
-        locData = comp["Position"]
-        location = [locData["X"], locData["Y"], locData["Z"]] or [0, 0, 0]
+            locData = meshData["Position"]
+            location = [locData["X"], locData["Y"], locData["Z"]] or [0, 0, 0]
         
-        rotData = comp["Rotation"]
-        rotation = [rotData["Pitch"], rotData["Yaw"], rotData["Roll"]] or [0, 0, 0]
+            rotData = meshData["Rotation"]
+            rotation = [rotData["Pitch"], rotData["Yaw"], rotData["Roll"]] or [0, 0, 0]
         
-        scaleData = comp["Scale"]
-        scale = [scaleData["X"], scaleData["Y"], scaleData["Z"]] or [1, 1, 1]
-        if scale == [0,0,0]:
-            scale = [1,1,1]
+            scaleData = meshData["Scale"]
+            scale = [scaleData["X"], scaleData["Y"], scaleData["Z"]] or [1, 1, 1]
+            if scale == [0,0,0]:
+               scale = [1,1,1]
         
-        print("\nActor %d of %d: %s" % (comp_i + 1, len(comps), name))
+            print("\nActor %d of %d: %s" % (comp_i + 1, len(comps), name))
 
-        def apply_ob_props(ob: bpy.types.Object, new_name: str = name) -> bpy.types.Object:
-            ob.name = new_name
-            ob.location = [location[0] * 0.01, location[1] * -0.01, location[2] * 0.01]
-            ob.rotation_mode = 'XYZ'
-            ob.rotation_euler = [radians(rotation[2]), radians(-rotation[0]), radians(-rotation[1])]
-            ob.scale = scale
-            return ob
+            def apply_ob_props(ob: bpy.types.Object, new_name: str = name) -> bpy.types.Object:
+                ob.name = new_name
+                ob.location = [location[0] * 0.01, location[1] * -0.01, location[2] * 0.01]
+                ob.rotation_mode = 'XYZ'
+                ob.rotation_euler = [radians(rotation[2]), radians(-rotation[0]), radians(-rotation[1])]
+                ob.scale = scale
+                return ob
 
-        def new_object(data: bpy.types.Mesh = None):
-            ob = apply_ob_props(bpy.data.objects.new(name, data or bpy.data.meshes["__fallback" if use_cube_as_fallback else "__empty"]), name)
-            bpy.context.collection.objects.link(ob)
-            bpy.context.view_layer.objects.active = ob
+            def new_object(data: bpy.types.Mesh = None):
+                ob = apply_ob_props(bpy.data.objects.new(name, data or bpy.data.meshes["__fallback" if use_cube_as_fallback else "__empty"]), name)
+                bpy.context.collection.objects.link(ob)
+                bpy.context.view_layer.objects.active = ob
 
-        bpy.context.window.scene = map_scene
-        bpy.context.view_layer.active_layer_collection = map_layer_collection
+            bpy.context.window.scene = map_scene
+            bpy.context.view_layer.active_layer_collection = map_layer_collection
 
-        if not mesh_path:
-            print("WARNING: No mesh, defaulting to fallback mesh")
-            new_object()
-            continue
+            if not mesh_path:
+                print("WARNING: No mesh, defaulting to fallback mesh")
+                new_object()
+                return
 
-        full_mesh_path = comp["DirPath"]
-        if os.path.exists(full_mesh_path) and pskimport(full_mesh_path, bpy.context, bReorientBones=True):
-            imported = bpy.context.active_object
-            apply_ob_props(imported)
-            imported.data.name = name
-            bpy.ops.object.shade_smooth()
-            bpy.ops.mesh.use_auto_smooth = True
+            full_mesh_path = mesh_path
+            if os.path.exists(full_mesh_path) and pskimport(full_mesh_path, bpy.context, bReorientBones=True):
+                imported = bpy.context.active_object
+                apply_ob_props(imported)
+                imported.data.name = name
+                bpy.ops.object.shade_smooth()
+                bpy.ops.mesh.use_auto_smooth = True
             
-            for m_idx, material in enumerate(comp["Materials"]):
-                import_material(imported, m_idx, material)
-        else:
-            print("WARNING: Mesh not imported, defaulting to fallback mesh:", full_mesh_path)
-            new_object()
+                for m_idx, material in enumerate(materials):
+                    import_material(imported, m_idx, material)
+            else:
+                print("WARNING: Mesh not imported, defaulting to fallback mesh:", full_mesh_path)
+                new_object()
+
+        if comp["Type"] == "StaticMeshActor":
+            import_mesh(comp, comp["DirPath"], comp["Materials"])
+        elif comp["Type"] == "HierarchicalInstancedStaticMeshActor":
+            print("---- Importing HISM ----")
+            for mesh_i, mesh in enumerate(comp["InstancedMeshes"]):
+                print("----> Importing HISM Actor " + str(mesh_i + 1) + "/" + str(len(comp["InstancedMeshes"])))
+                import_mesh(mesh, comp["DirPath"], comp["Materials"])
 
     return map_collection_inst
 

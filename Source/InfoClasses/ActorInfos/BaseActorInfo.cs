@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace BlenderUMap
+﻿namespace BlenderUMap
 {
-    internal class BaseActorInfo
+    internal abstract class BaseActorInfo
     {
         public string Name;
+        public abstract string Type { get; }
     }
 }

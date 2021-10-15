@@ -10,13 +10,16 @@ using Serilog;
 
 namespace BlenderUMap
 {
-    internal class MeshActorInfo : BaseActorInfo
+    internal class StaticMeshActorInfo : BaseActorInfo
     {
-        public static MeshActorInfo Get(UObject actor, bool exportMesh = true, bool readMaterials = true)
+        public override string Type => "StaticMeshActor";
+
+        public static StaticMeshActorInfo Get(UObject actor, bool exportMesh = true, bool readMaterials = true)
         {
             Log.Logger.Information("Attempting mesh read of actor " + actor.Name);
             var staticMeshComponent = actor.GetOrDefaultLazy<UStaticMeshComponent>("StaticMeshComponent").Value;
-            if (staticMeshComponent == null) return null;
+            if (staticMeshComponent == null)
+                return null;
 
             var staticMesh = staticMeshComponent.GetOrDefault<UStaticMesh>("StaticMesh");
             var materials = new List<MaterialInfo>();
@@ -26,7 +29,6 @@ namespace BlenderUMap
                 if (exporter.TryWriteToDir(Program.CurrentDirectory, out string savedFileName))
                 {
                     Log.Logger.Information("Exported mesh to " + staticMesh.GetExportDir());
-                    //Log.Logger.Information(savedFileName);
                 }
                 if (staticMesh.Materials != null && readMaterials)
                 {
@@ -41,7 +43,7 @@ namespace BlenderUMap
             }
             else if (staticMesh == null) Log.Logger.Warning("Failed to find StaticMesh on " + staticMeshComponent.Name);
 
-            MeshActorInfo info = new()
+            StaticMeshActorInfo info = new()
             {
                 Name = actor.Name,
                 DirPath = staticMesh == null ? string.Empty :
@@ -51,7 +53,7 @@ namespace BlenderUMap
                 StaticMesh = staticMesh,
                 Position = staticMeshComponent.GetOrDefault<FVector>("RelativeLocation"),
                 Rotation = staticMeshComponent.GetOrDefault<FRotator>("RelativeRotation"),
-                Scale = staticMeshComponent.GetOrDefault<FVector>("RelativeScale3D"),
+                Scale = staticMeshComponent.GetOrDefault<FVector>("RelativeScale3D") / 10,
                 Materials = materials,
                 Children = null
             };

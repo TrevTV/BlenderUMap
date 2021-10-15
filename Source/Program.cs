@@ -33,6 +33,9 @@ namespace BlenderUMap
             if (!Config.Init())
                 return;
 
+            // thanks to Amrsatrio for telling me how to do this
+            CUE4Parse.UE4.Assets.ObjectTypeRegistry.RegisterClass(typeof(UHierarchicalInstancedStaticMeshComponent));
+
             string configValidation = Config.CheckConfigValid();
             if (configValidation != null)
             {
@@ -72,7 +75,8 @@ namespace BlenderUMap
                 if (actor == null) continue;
 
                 BaseActorInfo info = null;
-                info ??= MeshActorInfo.Get(actor);
+                info ??= StaticMeshActorInfo.Get(actor);
+                info ??= HierarchicalInstancedStaticMeshActorInfo.Get(actor);
 
                 if (info != null)
                 {
