@@ -13,7 +13,7 @@ namespace BlenderUMap
         public string Path;
         public Dictionary<string, string> Textures;
 
-        public MaterialInfo(UMaterialInstance mat, bool extractTextures)
+        public MaterialInfo(UMaterialInterface mat, bool extractTextures)
         {
             Name = mat.Name;
             Path = mat.GetPathName();

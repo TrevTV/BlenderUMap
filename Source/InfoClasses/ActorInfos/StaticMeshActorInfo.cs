@@ -34,7 +34,7 @@ namespace BlenderUMap
                 {
                     foreach (var matLazy in staticMesh.Materials)
                     {
-                        if (matLazy.TryLoad<UMaterialInstance>(out var mat))
+                        if (matLazy.TryLoad<UMaterialInterface>(out var mat))
                             materials.Add(new MaterialInfo(mat, true));
                         else
                             Log.Logger.Warning("Failed to read material for " + staticMesh.Name);
