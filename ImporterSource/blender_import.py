@@ -39,7 +39,7 @@ def import_umap(comps, into_collection):
 
             def apply_ob_props(ob: bpy.types.Object, new_name: str = name) -> bpy.types.Object:
                 ob.name = new_name
-                ob.location = [location[0] * 0.01, location[1] * -0.01, location[2] * 0.01]
+                ob.location = location
                 ob.rotation_mode = 'XYZ'
                 ob.rotation_euler = [radians(rotation[2]), radians(-rotation[0]), radians(-rotation[1])]
                 ob.scale = scale

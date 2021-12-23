@@ -51,9 +51,9 @@ namespace BlenderUMap
                           ? Path.Combine(staticMesh.GetExportDir().FullName.Replace($"{Program.FileProvider.GameName}\\Content\\", "\\Game\\"), $"{staticMesh.Name}.pskx")
                           : Path.Combine(staticMesh.GetExportDir().FullName, $"{staticMesh.Name}_LOD0.pskx")),
                 StaticMesh = staticMesh,
-                Position = staticMeshComponent.GetOrDefault<FVector>("RelativeLocation"),
+                Position = staticMeshComponent.GetOrDefault<FVector>("RelativeLocation") / 100,
                 Rotation = staticMeshComponent.GetOrDefault<FRotator>("RelativeRotation"),
-                Scale = staticMeshComponent.GetOrDefault<FVector>("RelativeScale3D") / 10,
+                Scale = staticMeshComponent.GetOrDefault<FVector>("RelativeScale3D"),
                 Materials = materials,
                 Children = null
             };
