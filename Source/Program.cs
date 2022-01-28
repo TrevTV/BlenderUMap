@@ -1,25 +1,28 @@
-﻿using CUE4Parse.Encryption.Aes;
-using CUE4Parse.FileProvider;
-using CUE4Parse.UE4.Assets.Exports;
-using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.UE4.Objects.Engine;
-using CUE4Parse.UE4.Versions;
-using Newtonsoft.Json;
-using Serilog;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Collections.Generic;
+using Serilog;
+using Newtonsoft.Json;
+using CUE4Parse.FileProvider;
+using CUE4Parse.UE4.Versions;
+using CUE4Parse.UE4.Assets.Exports;
+using CUE4Parse.UE4.Objects.Engine;
 
 namespace BlenderUMap
 {
     internal class Program
     {
         public static DefaultFileProvider FileProvider;
+        public static DirectoryInfo ExportDirectory;
         public static DirectoryInfo CurrentDirectory;
 
         private static void Main()
         {
+            ExportDirectory = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "MapExport"));
             CurrentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+            if (!ExportDirectory.Exists)
+                ExportDirectory.Create();
 
             string timestamp = DateTime.Now.ToString("HH-mm-ss.ff");
             Log.Logger = new LoggerConfiguration()
@@ -32,9 +35,6 @@ namespace BlenderUMap
 
             if (!Config.Init())
                 return;
-
-            // thanks to Amrsatrio for telling me how to do this
-            CUE4Parse.UE4.Assets.ObjectTypeRegistry.RegisterClass(typeof(UHierarchicalInstancedStaticMeshComponent));
 
             string configValidation = Config.CheckConfigValid();
             if (configValidation != null)
@@ -87,7 +87,7 @@ namespace BlenderUMap
                     Log.Logger.Warning($"Failed to retrieve info from {actor.Name}, this object won't be included in the export.");
             }
 
-            File.WriteAllText("_processed.json", JsonConvert.SerializeObject(actors, Formatting.Indented));
+            File.WriteAllText(Path.Combine(ExportDirectory.FullName, "_processed.json"), JsonConvert.SerializeObject(actors, Formatting.Indented));
         }
     }
 }

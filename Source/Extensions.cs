@@ -10,10 +10,10 @@ namespace BlenderUMap
 			var pkgPath = obj?.GetPathName();
 			int idx = pkgPath.LastIndexOf('.');
 			if (idx >= 0)
-				pkgPath = pkgPath.Substring(0, idx);
+				pkgPath = pkgPath[..idx];
 			if (pkgPath.StartsWith("/"))
-				pkgPath = pkgPath.Substring(1);
-			var outputDir = new DirectoryInfo(pkgPath).Parent;
+				pkgPath = pkgPath[1..];
+			var outputDir = new DirectoryInfo(Path.Combine(Program.ExportDirectory.Name, pkgPath)).Parent;
 			outputDir.Create();
 			return outputDir;
 		}

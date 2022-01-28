@@ -5,7 +5,7 @@ import time
 from io_import_scene_unreal_psa_psk_280 import pskimport
 from math import *
 
-data_dir = r"F:\Projects\GitHub\BlenderUMap\Source\bin\Debug\netcoreapp3.1"
+data_dir = r"F:\Projects\GitHub\BlenderUMap\Source\bin\Debug\net6.0-windows\MapExport"
 
 reuse_maps = True
 reuse_meshes = True

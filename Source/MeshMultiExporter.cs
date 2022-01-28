@@ -28,7 +28,7 @@ namespace BlenderUMap
                     $"-log=log.txt " + 
                     $"-notex " +
                     $"-game=ue4.{Config.GameVersion.ToString().Split('_').Last()} " +
-                    $"-out=\"{Program.CurrentDirectory.FullName}\" " +
+                    $"-out=\"{Program.ExportDirectory.FullName}\" " +
                     $"-export \"{StaticMesh.Outer.GetPathName().Replace($"{Program.FileProvider.GameName}/Content/", "/Game/")}.uasset\" " +
                     $"\"{StaticMesh.GetPathName().Split('.').Last()}\"";
                 File.WriteAllText(Path.Combine(Program.CurrentDirectory.FullName, "UModel", "cmd.txt"), launchOptions);

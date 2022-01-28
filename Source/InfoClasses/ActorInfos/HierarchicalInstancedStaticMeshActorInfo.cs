@@ -9,6 +9,7 @@ using Serilog;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using CUE4Parse.UE4.Assets.Objects;
+using CUE4Parse.UE4.Assets.Exports.Component.StaticMesh;
 
 namespace BlenderUMap
 {
@@ -28,7 +29,7 @@ namespace BlenderUMap
             if (staticMesh != null && exportMesh)
             {
                 MeshMultiExporter exporter = new(staticMesh, ELodFormat.FirstLod, Config.UseUModel);
-                if (exporter.TryWriteToDir(Program.CurrentDirectory, out string savedFileName))
+                if (exporter.TryWriteToDir(Program.ExportDirectory, out string savedFileName))
                 {
                     Log.Logger.Information("Exported mesh to " + staticMesh.GetExportDir());
                 }
@@ -36,8 +37,8 @@ namespace BlenderUMap
                 {
                     foreach (var matLazy in staticMesh.Materials)
                     {
-                        if (matLazy.TryLoad<UMaterialInstance>(out var mat))
-                            materials.Add(new MaterialInfo(mat, true));
+                        if (matLazy.TryLoad(out var mat))
+                            materials.Add(new MaterialInfo((UMaterialInstance)mat, true));
                         else
                             Log.Logger.Warning("Failed to read material for " + staticMesh.Name);
                     }
@@ -58,7 +59,6 @@ namespace BlenderUMap
             {
                 ObjectProperty obj = (ObjectProperty)instanceComponents[i];
                 var hism = obj.Value.Load<UHierarchicalInstancedStaticMeshComponent>();
-
 
                 FVector position = default;
                 var bounds = staticMeshComponent.Properties.SingleOrDefault(p => p.Name.Text == "BuiltInstanceBounds")?.Tag;

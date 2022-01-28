@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
 	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
@@ -11,11 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.15.0" />
-    <PackageReference Include="K4os.Compression.LZ4" Version="1.2.12" />
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.2.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="SevenZip" Version="19.0.0" />
     <PackageReference Include="SkiaSharp" Version="2.80.3" />

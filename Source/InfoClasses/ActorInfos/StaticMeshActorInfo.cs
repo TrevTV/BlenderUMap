@@ -26,7 +26,7 @@ namespace BlenderUMap
             if (staticMesh != null && exportMesh)
             {
                 MeshMultiExporter exporter = new(staticMesh, ELodFormat.FirstLod, Config.UseUModel);
-                if (exporter.TryWriteToDir(Program.CurrentDirectory, out string savedFileName))
+                if (exporter.TryWriteToDir(Program.ExportDirectory, out string savedFileName))
                 {
                     Log.Logger.Information("Exported mesh to " + staticMesh.GetExportDir());
                 }
@@ -34,8 +34,8 @@ namespace BlenderUMap
                 {
                     foreach (var matLazy in staticMesh.Materials)
                     {
-                        if (matLazy.TryLoad<UMaterialInterface>(out var mat))
-                            materials.Add(new MaterialInfo(mat, true));
+                        if (matLazy.TryLoad(out var mat))
+                            materials.Add(new MaterialInfo((UMaterialInterface)mat, true));
                         else
                             Log.Logger.Warning("Failed to read material for " + staticMesh.Name);
                     }
