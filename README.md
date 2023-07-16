@@ -1,4 +1,4 @@
-# BlenderUMap [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S244CYE)
+# BlenderUMap
 A port of [Amrsatrio/BlenderUmap](https://github.com/Amrsatrio/BlenderUmap) to C# and CUE4Parse.
 
 # Usage
